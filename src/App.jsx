@@ -1,4 +1,4 @@
-import { WalletConnection } from "./ConnectWallet"
+import { WalletConnection } from "./components/ConnectWallet"
 
 function App() {
 
