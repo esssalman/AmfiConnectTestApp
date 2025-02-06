@@ -14,6 +14,7 @@ import ReferralModal from "./referralLink";
 import Countdown from "react-countdown";
 import { ToastContainer, toast } from 'react-toastify';
 import { createPortal } from 'react-dom';
+// import { SubmitPayButton } from "./submitPay";
 
 // Initialize Thirdweb Client with your client ID
 const client = createThirdwebClient({
@@ -84,6 +85,7 @@ export function WalletConnection() {
 
 
     useEffect(() => {
+        setCurrency("USDT");
         window.addEventListener("eip6963:announceProvider", (event) => {
             const provider = event.detail.provider
 
@@ -102,6 +104,12 @@ export function WalletConnection() {
         ReadRefFromLink();
 
     }, [])
+
+    useEffect(() => {
+        if (currency) {
+            handleCurrencyChange({ target: { value: currency } });
+        }
+    }, [currency]);
 
 
     const ReadRefFromLink = () => {
@@ -155,15 +163,17 @@ export function WalletConnection() {
             const liveRate = await getLiveRates(selectedCurrency);
             // amount = (250); // Multiply by 250 (your fixed amount)
             // amount = (0.5 / liveRate); // Multiply by 250 (your fixed amount)
-            amount = (250 / liveRate);
+
+            // amount = (250 / liveRate);
+            amount = 0.001;
             setTransactionAmount(amount);
             setLoading(false);
         }
         else {
             setLoading(true);
             const liveRate = await getLiveRates(selectedCurrency); // Fetch live rate for the selected currency
-            amount = (250 / liveRate); // Divide by 250 (your fixed amount)
-            // amount = (0.000001)
+            // amount = (250 / liveRate); // Divide by 250 (your fixed amount)
+            amount = 0.001;
             setTransactionAmount(amount);
             setLoading(false);
         }
@@ -444,7 +454,7 @@ export function WalletConnection() {
                                         <select id="payment-method" className="dropdown-select" value={currency} onChange={handleCurrencyChange}>
                                             <option value="">Select</option>
                                             {/* <option value="ETH">ETH</option> */}
-                                            <option value="BNB">BNB</option>
+                                            {/* <option value="BNB">BNB</option> */}
                                             <option value="USDT">USDT</option>
                                             <option value="USDC">USDC</option>
                                         </select>
@@ -465,14 +475,25 @@ export function WalletConnection() {
 
                                 </div>
                                 <div className="ICO-buttons mt-30" >
-
+                                    {/* <SubmitPayButton
+                                        address={address}
+                                        tAmount={transactionAmount}
+                                        currency={currency}
+                                        verifyWalletAddress={verifyWalletAddress}
+                                        metaMaskProvider={metaMaskProvider}
+                                        trustWalletProvider={trustWalletProvider}
+                                        client={client}
+                                        chain={defaultChain}
+                                        email={referral_link}
+                                    // name={userName}
+                                    /> */}
                                     <div className=" wow fadeInUp">
                                         <a href="#" className="dream-btn" data-bs-toggle="modal"
                                             data-bs-target="#seedRoundModal">Join Whitelist</a>
                                     </div>
                                     {/* <div className=" wow fadeInUp">
-                                <a href="#" className="dream-btn">Connect Wallet</a>
-                            </div> */}
+                                        <a href="#" className="dream-btn">Connect Wallet</a>
+                                    </div> */}
                                     <div className="text-right" >
                                         <div>
                                             <ConnectButton
@@ -482,10 +503,11 @@ export function WalletConnection() {
                                                 switchButton={{
                                                     label: "Switch Network",
                                                     className: "dream-btn",
+                                                    style: { border: "none" },
                                                 }}
                                                 connectButton={{
                                                     label: "Connect Wallet",
-                                                    style: { fontSize: "12px" },
+                                                    style: { fontSize: "12px", border: "none" },
                                                     className: "dream-btn",
                                                 }}
                                                 detailsButton={{
@@ -515,6 +537,7 @@ export function WalletConnection() {
                                 data-bs-target="#RefferalModal">Get Referral Link</a>}
                         </div>
                     ) : ''}
+
                     <TransactionModal metaMaskProvider={metaMaskProvider} trustWalletProvider={trustWalletProvider} client={client} chain={defaultChain} address={address} tAmount={transactionAmount} currency={currency} verifyWalletAddress={verifyWalletAddress} />
                     <ReferralModal link={referral_link} />
                 </ThirdwebProvider>
